@@ -74,7 +74,7 @@ export default function Home() {
                 layout: {
                   type: "spring",
                   bounce: 0.4,
-                  duaration: 1,
+                  // duaration: 1,
                   duration: animatingMessages.includes(message)
                     ? 0.15 * animatingMessages.indexOf(message) + 0.85
                     : 1,
@@ -83,7 +83,7 @@ export default function Home() {
               className="flex"
               style={{
                 originX: message.user === "me" ? 1 : 0,
-                originY: 0,
+                // originY: 0,
               }}
               key={message.id}
             >
