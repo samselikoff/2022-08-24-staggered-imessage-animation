@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { PlusIcon } from "@heroicons/react/solid";
+import { AnimatePresence, motion } from "framer-motion";
 
 let seeds = [
   { user: "me", text: "Yo yo" },
@@ -20,6 +21,7 @@ seeds = seeds.map((seed, i) => ({ ...seed, id: i + 1 }));
 
 export default function Home() {
   const [messages, setMessages] = useState(seeds);
+  const [lastChangedIndex, setLastChangedIndex] = useState(null);
 
   function addMessage() {
     let index = Math.floor(Math.random() * messages.length);
@@ -32,6 +34,7 @@ export default function Home() {
       text: "Your mom said it's time to come home",
     };
 
+    setLastChangedIndex(index);
     setMessages([
       ...messages.slice(0, index),
       newMessage,
@@ -40,8 +43,11 @@ export default function Home() {
   }
 
   function removeMessage(message) {
+    setLastChangedIndex(messages.indexOf(message));
     setMessages((messages) => messages.filter((m) => m.id !== message.id));
   }
+
+  let animatingMessages = messages.slice(lastChangedIndex);
 
   return (
     <div className="max-w-sm mx-auto flex flex-col px-4">
@@ -54,21 +60,44 @@ export default function Home() {
         </button>
       </div>
 
-      <ul className="w-full space-y-1 mt-4 text-sm">
-        {messages.map((message) => (
-          <li key={message.id} className="flex">
-            <button
-              onClick={() => removeMessage(message)}
-              className={`${
-                message.user === "me"
-                  ? "bg-blue-500 ml-auto"
-                  : "bg-gray-500 mr-auto"
-              } px-3 py-1 bg-blue-500 text-white text-left rounded-full`}
+      <ul className="w-full mt-4 text-sm">
+        <AnimatePresence initial={false} mode="popLayout">
+          {messages.map((message) => (
+            <motion.li
+              layout
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{
+                opacity: { duration: 0.2 },
+                layout: {
+                  type: "spring",
+                  bounce: 0.4,
+                  duration: lastChangedIndex
+                    ? animatingMessages.indexOf(message) * 0.15 + 0.85
+                    : 1,
+                },
+              }}
+              style={{
+                originX: message.user === "me" ? 1 : 0,
+              }}
+              key={message.id}
             >
-              {message.text}
-            </button>
-          </li>
-        ))}
+              <div className="py-0.5 flex">
+                <button
+                  onClick={() => removeMessage(message)}
+                  className={`${
+                    message.user === "me"
+                      ? "bg-blue-500 ml-auto"
+                      : "bg-gray-500 mr-auto"
+                  } px-3 py-1 bg-blue-500 text-white text-left rounded-full`}
+                >
+                  {message.text}
+                </button>
+              </div>
+            </motion.li>
+          ))}
+        </AnimatePresence>
       </ul>
     </div>
   );
