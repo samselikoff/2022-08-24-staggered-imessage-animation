@@ -60,7 +60,7 @@ export default function Home() {
         </button>
       </div>
 
-      <ul className="w-full mt-4 text-sm">
+      <ul className="w-full mt-4">
         <AnimatePresence initial={false} mode="popLayout">
           {messages.map((message) => (
             <motion.li
@@ -83,14 +83,15 @@ export default function Home() {
               }}
               key={message.id}
             >
-              <div className="py-0.5 flex">
+              <div className="py-[3px] flex">
                 <button
                   onClick={() => removeMessage(message)}
                   className={`${
                     message.user === "me"
                       ? "bg-blue-500 ml-auto"
                       : "bg-gray-500 mr-auto"
-                  } px-3 py-1 bg-blue-500 text-white text-left rounded-full`}
+                  } px-3 py-1 bg-blue-500 text-white text-left rounded-full select-none`}
+                  style={{ WebkitTapHighlightColor: "transparent" }}
                 >
                   {message.text}
                 </button>
